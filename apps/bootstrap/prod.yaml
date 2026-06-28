@@ -1,0 +1,42 @@
+---
+# ArgoCD Application: bootstrap-prod
+# ----------------------------------------------------------------------------
+# Bootstrap for production environment.
+# Apply:
+#   kubectl apply -f apps/bootstrap/prod.yaml
+# ----------------------------------------------------------------------------
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap-prod
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: bootstrap
+    lake.io/environment: prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/neriberto/lake-argocd-iac.git
+    targetRevision: main
+    path: apps/prod/
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

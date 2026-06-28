@@ -23,6 +23,7 @@ metadata:
 spec:
   description: Platform workloads (postgresql, redis, kafka, secrets — shared data layer and dependencies)
   sourceRepos:
+    - https://github.com/neriberto/lakeops
     - https://seaweedfs.github.io/seaweedfs/helm
   destinations:
     - namespace: '*'
@@ -32,6 +33,10 @@ spec:
       kind: Namespace
     - group: ''
       kind: PersistentVolume
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRole
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRoleBinding
   namespaceResourceWhitelist:
     - group: ''
       kind: ConfigMap

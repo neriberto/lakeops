@@ -1,0 +1,29 @@
+# apps/values/dev/seaweedfs.yaml
+# Overrides for seaweedfs Helm chart in dev (microk8s).
+# ----------------------------------------------------------------------------
+master:
+  enabled: true
+  data:
+    type: "persistentVolumeClaim"
+    storageClass: "microk8s-hostpath"
+    size: "1Gi"
+volume:
+  enabled: true
+  readMode: proxy
+  dataDirs:
+    - name: data
+      type: "persistentVolumeClaim"
+      storageClass: "microk8s-hostpath"
+      size: "10Gi"
+      maxVolumes: 0
+filer:
+  enabled: true
+  enablePVC: true
+  storageClass: "microk8s-hostpath"
+  storage: "5Gi"
+  s3:
+    enabled: true
+    enableAuth: false
+    port: 8333
+s3:
+  enabled: false

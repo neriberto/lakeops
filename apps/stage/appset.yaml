@@ -1,0 +1,32 @@
+---
+# apps/stage/appset.yaml
+# ----------------------------------------------------------------------------
+# ApplicationSet for staging environment.
+# ----------------------------------------------------------------------------
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: appset-stage
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: appset
+    lake.io/environment: stage
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements: []
+  template:
+    metadata:
+      name: placeholder
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://seaweedfs.github.io/seaweedfs/helm
+        chart: seaweedfs
+        targetRevision: 3.0.0
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: placeholder

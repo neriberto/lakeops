@@ -1,0 +1,70 @@
+---
+# apps/dev/appset.yaml
+# ----------------------------------------------------------------------------
+# ApplicationSet for local dev (microk8s single-node). Generates Applications
+# for datalake components into the in-cluster microk8s.
+#
+# Applied via apps/bootstrap/dev.yaml which references this file as its
+# path. The bootstrap Application itself uses project: default (the
+# appset assigns each generated Application to its correct AppProject
+# via `project: '{{.project}}'` below).
+# ----------------------------------------------------------------------------
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: appset-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: appset
+    lake.io/environment: dev
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - chart: seaweedfs
+            namespace: seaweedfs
+            project: infrastructure
+            syncWave: -2
+  template:
+    metadata:
+      name: "{{ .chart }}-dev"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: lake
+        app.kubernetes.io/component: workload
+        lake.io/environment: dev
+      annotations:
+        argocd.argoproj.io/sync-wave: "{{ .syncWave }}"
+    spec:
+      project: "{{ .project }}"
+      sources:
+        - repoURL: https://seaweedfs.github.io/seaweedfs/helm
+          chart: "{{ .chart }}"
+          targetRevision: 4.36.0
+          helm:
+            releaseName: "{{ .chart }}"
+            valueFiles:
+              - "$values/apps/values/dev/{{ .chart }}.yaml"
+        - repoURL: https://github.com/neriberto/lakeops
+          targetRevision: main
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: true
+          allowEmpty: false
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - ApplyOutOfSyncOnly=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 10s
+            factor: 2
+            maxDuration: 3m

@@ -19,6 +19,7 @@
 
 # Source repos allowed as Application sources.
 sourceRepos:
+  - https://github.com/neriberto/lakeops
   - https://seaweedfs.github.io/seaweedfs/helm
 
 # NOT `server: '*'` — defense in depth against misconfigured cluster
@@ -47,6 +48,10 @@ clusterResourceWhitelist:
     kind: Namespace
   - group: ''
     kind: PersistentVolume
+  - group: 'rbac.authorization.k8s.io'
+    kind: ClusterRole
+  - group: 'rbac.authorization.k8s.io'
+    kind: ClusterRoleBinding
 
 namespaceResourceWhitelist:
   - group: ''

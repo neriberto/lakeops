@@ -1,0 +1,50 @@
+---
+# ArgoCD Application: bootstrap-dev
+# ----------------------------------------------------------------------------
+# One-shot bootstrap for local dev (microk8s single-node). Creates the
+# appset-dev ApplicationSet which generates the Applications.
+#
+# Pre-requisites:
+#   1. ArgoCD installed on microk8s
+#   2. bootstrap-appprojects applied first so the `infrastructure`,
+#      `platform`, `workloads` AppProjects exist
+#
+# Apply:
+#   kubectl apply -f apps/bootstrap/dev.yaml
+#   argocd app sync bootstrap-dev
+# ----------------------------------------------------------------------------
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: bootstrap
+    lake.io/environment: dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/neriberto/lakeops
+    targetRevision: main
+    path: apps/dev/
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
