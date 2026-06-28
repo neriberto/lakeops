@@ -24,7 +24,7 @@ spec:
     - list:
         elements:
           - chart: seaweedfs
-            namespace: seaweedfs
+            namespace: seaweedfs-dev
             project: infrastructure
             syncWave: -2
   template:
