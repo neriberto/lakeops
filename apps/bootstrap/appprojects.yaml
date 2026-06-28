@@ -1,0 +1,51 @@
+---
+# ArgoCD Application: bootstrap-appprojects
+# ----------------------------------------------------------------------------
+# Self-manages the AppProject trio generated from apps/appprojects/.
+# This Application reconciles the committed rendered manifests under
+# apps/appprojects/rendered/ directly — no helm template pipeline required.
+#
+# Bootstrap order (apply in this sequence):
+#   1. kubectl apply -f apps/bootstrap/appprojects.yaml
+#        → creates AppProject trio (infrastructure, platform, workloads)
+#   2. kubectl apply -f apps/bootstrap/dev.yaml
+#        → creates Appset-dev which generates Applications
+#   3. kubectl apply -f apps/bootstrap/stage.yaml
+#   4. kubectl apply -f apps/bootstrap/prod.yaml
+# ----------------------------------------------------------------------------
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap-appprojects
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: appproject-bootstrap
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/neriberto/lakeops.git
+    targetRevision: main
+    path: apps/appprojects/rendered
+    directory:
+      recurse: false
+      include: '{infrastructure,platform,workloads}.yaml'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

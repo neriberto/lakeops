@@ -1,0 +1,115 @@
+---
+# apps/appprojects/values.yaml — single source of truth for the 3 AppProjects.
+#
+# Add a new project: append to .projects with name + description. The template
+# iterates over .projects to emit one AppProject per entry.
+#
+# Add a new cluster: append to .destinations with the destination server ARN
+# and namespace (use '*' for namespace unless policy demands tighter scoping).
+# This is intentionally NOT keyed per project so the allowlist stays uniform
+# across the 3 categories (RFC 0001 §D4.6).
+#
+# RBAC whitelists (cluster + namespace) are tightened to the minimum set of
+# resources
+#
+# Validation:
+#   helm lint apps/appprojects/
+#   helm template apps/appprojects/ | kubeconform -strict -summary
+# -----------------------------------------------------------------------------
+
+# Source repos allowed as Application sources.
+sourceRepos:
+  - https://seaweedfs.github.io/seaweedfs/helm
+
+# NOT `server: '*'` — defense in depth against misconfigured cluster
+# registrations on the ArgoCD side. Allowed clusters:
+#   - Local dev (microk8s) — https://kubernetes.default.svc
+#   - Stage                — https://kubernetes.default.svc
+#   - Prod                 — https://kubernetes.default.svc
+#
+# CI lint (scripts/validate_applicationsets.py) rejects any Application
+# that targets the in-cluster destination outside of apps/dev/**, so the
+# AppProject allowlist stays uniform while dev remains isolated by path
+# convention (defense in depth on top of the AppProject allowlist).
+destinations:
+  # Local dev (microk8s) — in-cluster endpoint.
+  - server: https://kubernetes.default.svc
+    namespace: '*'
+  # Stage (microk8s) — in-cluster endpoint.
+  - server: https://kubernetes.default.svc
+    namespace: '*'
+  # Prod (microk8s) — in-cluster endpoint.
+  - server: https://kubernetes.default.svc
+    namespace: '*'
+
+clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  - group: ''
+    kind: PersistentVolume
+
+namespaceResourceWhitelist:
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: CronJob
+  - group: ''
+    kind: Deployment
+  - group: ''
+    kind: Endpoints
+  - group: ''
+    kind: HorizontalPodAutoscaler
+  - group: ''
+    kind: Ingress
+  - group: ''
+    kind: Job
+  - group: ''
+    kind: PersistentVolumeClaim
+  - group: ''
+    kind: PodDisruptionBudget
+  - group: ''
+    kind: Pod
+  - group: ''
+    kind: ReplicaSet
+  - group: ''
+    kind: Secret
+  - group: ''
+    kind: Service
+  - group: ''
+    kind: ServiceAccount
+  - group: ''
+    kind: StatefulSet
+  - group: ''
+    kind: StorageClass
+  - group: 'apps'
+    kind: Deployment
+  - group: 'apps'
+    kind: StatefulSet
+  - group: 'batch'
+    kind: CronJob
+  - group: 'batch'
+    kind: Job
+  - group: 'rbac.authorization.k8s.io'
+    kind: Role
+  - group: 'rbac.authorization.k8s.io'
+    kind: RoleBinding
+  - group: 'monitoring.coreos.com'
+    kind: ServiceMonitor
+  - group: 'monitoring.coreos.com'
+    kind: PrometheusRule
+  - group: 'networking.k8s.io'
+    kind: Ingress
+  - group: 'policy'
+    kind: PodDisruptionBudget
+
+orphanedResources:
+  warn: true
+  ignore: []
+
+projects:
+  - name: infrastructure
+    description: Infrastructure workloads (object storage, networking, ingress, monitoring, certificates)
+  - name: platform
+    description: Platform workloads (postgresql, redis, kafka, secrets — shared data layer and dependencies)
+  - name: workloads
+    description: Datalake workloads (airflow, trino, spark, nessie, metabase, superset, jupyterhub)

@@ -1,0 +1,29 @@
+{{/*
+Standard AppProject template. Iterates over .Values.projects to emit one
+AppProject per entry. All other fields (sourceRepos, destinations, whitelists)
+are uniform across the 3 categories
+*/}}
+{{- range .Values.projects }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .name }}
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: appproject
+    lake.io/category: {{ .name }}
+spec:
+  description: {{ .description }}
+  sourceRepos:
+    {{- toYaml $.Values.sourceRepos | nindent 4 }}
+  destinations:
+    {{- toYaml $.Values.destinations | nindent 4 }}
+  clusterResourceWhitelist:
+    {{- toYaml $.Values.clusterResourceWhitelist | nindent 4 }}
+  namespaceResourceWhitelist:
+    {{- toYaml $.Values.namespaceResourceWhitelist | nindent 4 }}
+  orphanedResources:
+    {{- toYaml $.Values.orphanedResources | nindent 4 }}
+{{- end }}

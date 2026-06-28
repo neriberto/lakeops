@@ -1,0 +1,90 @@
+---
+# apps/appprojects/rendered/infrastructure.yaml
+# ----------------------------------------------------------------------------
+# Rendered output of helm template appprojects apps/appprojects/
+# -s templates/appproject.yaml. This file is committed so ArgoCD can apply
+# the AppProjects directly, without requiring a Helm-aware pipeline.
+#
+# To regenerate after editing apps/appprojects/values.yaml or templates/:
+#   bash scripts/render-appprojects.sh
+# ----------------------------------------------------------------------------
+# Source: appprojects/templates/appproject.yaml
+---
+# Source: appprojects/templates/appproject.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: appproject
+    lake.io/category: infrastructure
+spec:
+  description: Infrastructure workloads (object storage, networking, ingress, monitoring, certificates)
+  sourceRepos:
+    - https://seaweedfs.github.io/seaweedfs/helm
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: ''
+      kind: PersistentVolume
+  namespaceResourceWhitelist:
+    - group: ''
+      kind: ConfigMap
+    - group: ''
+      kind: CronJob
+    - group: ''
+      kind: Deployment
+    - group: ''
+      kind: Endpoints
+    - group: ''
+      kind: HorizontalPodAutoscaler
+    - group: ''
+      kind: Ingress
+    - group: ''
+      kind: Job
+    - group: ''
+      kind: PersistentVolumeClaim
+    - group: ''
+      kind: PodDisruptionBudget
+    - group: ''
+      kind: Pod
+    - group: ''
+      kind: ReplicaSet
+    - group: ''
+      kind: Secret
+    - group: ''
+      kind: Service
+    - group: ''
+      kind: ServiceAccount
+    - group: ''
+      kind: StatefulSet
+    - group: ''
+      kind: StorageClass
+    - group: 'apps'
+      kind: Deployment
+    - group: 'apps'
+      kind: StatefulSet
+    - group: 'batch'
+      kind: CronJob
+    - group: 'batch'
+      kind: Job
+    - group: 'rbac.authorization.k8s.io'
+      kind: Role
+    - group: 'rbac.authorization.k8s.io'
+      kind: RoleBinding
+    - group: 'monitoring.coreos.com'
+      kind: ServiceMonitor
+    - group: 'monitoring.coreos.com'
+      kind: PrometheusRule
+    - group: 'networking.k8s.io'
+      kind: Ingress
+    - group: 'policy'
+      kind: PodDisruptionBudget
+  orphanedResources:
+    warn: true
+    ignore: []

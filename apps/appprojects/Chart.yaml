@@ -1,0 +1,27 @@
+apiVersion: v2
+name: appprojects
+description: |
+  ArgoCD AppProjects for the lake platform, rendered into 3 categories
+  (infrastructure, platform, workloads) from a single source of truth.
+
+  # Why a Helm chart
+  #
+  # Drift between AppProjects is impossible by construction — all 3 outputs
+  # are generated from the same values.yaml + templates, varying only by
+  # name and description.
+
+  # Rendering
+  #
+  #   helm template apps/appprojects/ > /tmp/rendered-all.yaml
+  #   helm template apps/appprojects/ -s templates/infrastructure.yaml \
+  #     > apps/appprojects/rendered/infrastructure.yaml
+  #
+  # The rendered/ tree is committed so ArgoCD can apply the AppProjects
+  # directly without a Helm-aware pipeline. CI re-renders and diffs the
+  # output against the committed files to detect drift.
+
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+kubeVersion: ">=1.24.0-0"
+icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
