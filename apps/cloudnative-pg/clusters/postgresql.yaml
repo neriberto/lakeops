@@ -1,0 +1,44 @@
+# apps/cloudnative-pg/clusters/postgresql.yaml
+# The platform's `dev` PostgreSQL Cluster CR, deployed via ArgoCD.
+# See ADR-0009 for the architectural decision and SPEC-0006 for the
+# pinning contract. Per-environment values live at
+# apps/values/dev/postgresql.yaml as a sibling documentation file
+# (ArgoCD does not consume it; it's the contract).
+# ----------------------------------------------------------------------------
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql-dev
+  namespace: cloudnative-pg-dev
+  labels:
+    app.kubernetes.io/part-of: lake
+    app.kubernetes.io/component: data-layer
+    lake.io/environment: dev
+spec:
+  instances: 1
+  postgresqlVersion: "17"
+
+  primaryUpdateStrategy: unsupervised
+
+  enableSuperuserAccess: false
+
+  storage:
+    size: 8Gi
+    # storageClass intentionally empty (uses cluster default —
+    # gp2 on EKS, standard on GKE, microk8s-hostpath on microk8s,
+    # local-path on k3s).
+
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+
+  monitoring:
+    enabled: false
+
+  bootstrap:
+    initdb:
+      database: lake
+      owner: lake
+      secret:
+        name: postgresql-credentials

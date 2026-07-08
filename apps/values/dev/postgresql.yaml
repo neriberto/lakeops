@@ -1,0 +1,47 @@
+# apps/values/dev/postgresql.yaml
+# Per-environment values for the CloudNativePG wrapper chart at
+# apps/cloudnative-pg/postgresql/. This file overrides the chart's defaults
+# for the `dev` environment only; `stage` and `prod` will have their own
+# overrides under apps/values/{stage,prod}/postgresql.yaml when those
+# environments activate.
+#
+# The wrapper chart consumes these values via the standard ApplicationSet
+# `valueFiles` path ($values/apps/values/dev/{{ .chart }}.yaml). The
+# `chart:` element in the appset is `postgresql`, matching the wrapper
+# chart's name.
+# ----------------------------------------------------------------------------
+
+# Cluster identity
+cluster:
+  name: postgresql-dev
+  namespace: cloudnative-pg-dev
+  instances: 1
+  postgresqlVersion: "17"
+
+# Storage (per-environment override)
+storage:
+  size: 8Gi
+  # storageClass intentionally empty (inherits cluster default —
+  # gp2 on EKS, standard on GKE, microk8s-hostpath on microk8s,
+  # local-path on k3s).
+
+# Resources (per-environment override)
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+
+# Bootstrap / database / users
+database: lake
+owner: lake
+# SealedSecret-derived `Secret` named `postgresql-credentials`
+# carries the `lake` user credentials. Admin password uses the
+# same Secret. Per ADR-0008 and the helm-secrets follow-up;
+# Track C (operator install) is what populates the Secret.
+existingSecret: postgresql-credentials
+
+# Operational settings
+enableSuperuserAccess: false
+primaryUpdateStrategy: unsupervised
+monitoring:
+  enabled: false

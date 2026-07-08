@@ -96,15 +96,13 @@ flowchart LR
 ### Phase 0 — Foundation: PostgreSQL
 
 - **AppProject:** `platform`
-- **Namespace:** `postgresql-dev`
-- **Chart:** Bitnami PostgreSQL (Helm repo `https://charts.bitnami.com/bitnami`)
-- **Justification:** Every analytics workload in Phase 1+ needs a relational
-  metadata store. Installing PostgreSQL first is the lowest-risk foundation:
-  all later phases are guaranteed to find a real Postgres to connect to.
+- **Namespace:** `cloudnative-pg-dev` (the operator's namespace; the `Cluster` CR lives there)
+- **Source of truth:** `apps/cloudnative-pg/clusters/postgresql.yaml` (a `Cluster` CR, deployed via a standalone ArgoCD `Application`)
+- **Operator install:** the `cloudnative-pg` ApplicationSet element at `apps/dev/appset.yaml` deploys the CloudNativePG operator chart at `version: 0.29.0` under the `infrastructure` AppProject
+- **Justification:** CloudNativePG gives declarative HA, S3 WAL archiving against the existing SeaweedFS cluster, Prometheus-native metrics, declarative `Pooler` integration for PgBouncer. [ADR-0009](../adr/0009-cloudnative-pg-for-platform-data-layer.md) records the decision; [ADR-0007](../adr/0007-bitnami-postgresql-chart-for-platform-foundation.md) (Bitnami chart) is superseded.
 - **Blocked by:** nothing.
-- **Blocks:** Nessie, Metabase, Airflow, JupyterHub, Superset (everything
-  downstream that needs SQL metadata).
-- **Sync wave:** `-1` (after SeaweedFS at `-2`, before everything else).
+- **Blocks:** Nessie, Metabase, Airflow, JupyterHub, Superset (every downstream that needs SQL metadata).
+- **Sync wave:** `-1` (after the foundation `-2` wave that includes the operator install and SeaweedFS).
 
 ### Phase 1 — Catalog and BI: Nessie + Metabase
 
@@ -199,9 +197,6 @@ dependency from Phase 0; they do not depend on each other.
   Metabase for now, defer Superset. Confirm before Phase 1 lands.
 - **Redis / Kafka** — needed in the initial MVP, or Phase 4+?
   Recommendation: Phase 4+. Confirm.
-- **PostgreSQL operator** — Bitnami chart, Zalando postgres-operator, or
-  CloudNativePG? Recommendation: Bitnami for `dev` simplicity; revisit for
-  `stage` / `prod` HA requirements in RFC-0004.
 - **Airflow executor** — CeleryExecutor (needs Redis/RabbitMQ) vs
   KubernetesExecutor (no extra infra) vs CeleryKubernetesExecutor (mixed).
   Recommendation: KubernetesExecutor in `dev` to avoid pulling in Redis as a
@@ -209,6 +204,9 @@ dependency from Phase 0; they do not depend on each other.
 
 ## References
 
+- [ADR-0009](../adr/0009-cloudnative-pg-for-platform-data-layer.md) — ratifies CloudNativePG as the data-layer choice; supersedes ADR-0007.
+- [SPEC-0006](../specs/0006-cloudnative-pg-pinning-and-cluster-cr-contract.md) — pins the operator chart version, the wrapper chart version, and `spec.postgresqlVersion`.
+- [ADR-0007](../adr/0007-bitnami-postgresql-chart-for-platform-foundation.md) — picks the Bitnami Helm chart for PostgreSQL in `dev`; Zalando and CloudNativePG are deferred to RFC-0004 multi-cluster HA work. (Superseded by ADR-0009.)
 - [ADR-0003](../adr/0003-three-tier-categorization.md) — three-tier
   categorization places PostgreSQL in `platform`, the rest in `workloads`.
 - [ADR-0005](../adr/0005-per-environment-applicationsets.md) — per-environment

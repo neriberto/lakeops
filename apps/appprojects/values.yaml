@@ -22,7 +22,7 @@ sourceRepos:
   - https://github.com/neriberto/lakeops
   - https://seaweedfs.github.io/seaweedfs/helm
   - https://cloudnative-pg.github.io/charts
-  - https://charts.bitnami.com/bitnami
+  - https://github.com/dremio/dremio-cloud-tools/
 
 # NOT `server: '*'` — defense in depth against misconfigured cluster
 # registrations on the ArgoCD side. Allowed clusters:

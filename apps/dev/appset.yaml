@@ -37,10 +37,18 @@ spec:
           - name: cloudnative-pg
             repoURL: https://cloudnative-pg.github.io/charts
             chart: cloudnative-pg
-            version: 0.26.0
+            version: 0.29.0
             namespace: cloudnative-pg-dev
             project: infrastructure
             syncWave: -2
+
+          - name: dremio
+            repoURL: https://github.com/dremio/dremio-cloud-tools/
+            chart: charts/dremio_v2
+            version: HEAD
+            namespace: dremio-dev
+            project: workloads
+            syncWave: -5
 
   template:
     metadata:

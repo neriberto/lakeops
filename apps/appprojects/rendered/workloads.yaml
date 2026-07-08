@@ -15,7 +15,7 @@ spec:
     - https://github.com/neriberto/lakeops
     - https://seaweedfs.github.io/seaweedfs/helm
     - https://cloudnative-pg.github.io/charts
-    - https://charts.bitnami.com/bitnami
+    - https://github.com/dremio/dremio-cloud-tools/
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
