@@ -1,11 +1,12 @@
 ---
 # ArgoCD Application: bootstrap-dev
 # ----------------------------------------------------------------------------
-# One-shot bootstrap for local dev (microk8s single-node). Creates the
+# One-shot bootstrap for the local dev cluster (single-node, any conformant
+# Kubernetes distribution — microk8s, k3s, kind, ...). Creates the
 # appset-dev ApplicationSet which generates the Applications.
 #
 # Pre-requisites:
-#   1. ArgoCD installed on microk8s
+#   1. ArgoCD installed on the local cluster
 #   2. bootstrap-appprojects applied first so the `infrastructure`,
 #      `platform`, `workloads` AppProjects exist
 #

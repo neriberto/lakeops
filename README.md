@@ -73,7 +73,7 @@ bootstrap-dev ─► appset-dev ─► seaweedfs-dev
 
 ## Prerequisites
 
-- Kubernetes cluster (tested on microk8s via WSL)
+- Kubernetes cluster
 - ArgoCD installed on the cluster (see [docs/argocd.md](docs/argocd.md))
 - `kubectl` configured for the cluster
 
@@ -119,9 +119,9 @@ kubectl port-forward -n seaweedfs-dev svc/seaweedfs-s3 8333:8333
 
 | Environment | Namespace pattern | Cluster |
 |---|---|---|
-| `dev` | `{component}-dev` | microk8s (single-node) |
-| `stage` | `{component}-stage` | microk8s (single-node) |
-| `prod` | `{component}-prod` | microk8s (single-node) |
+| `dev` | `{component}-dev` | Single-node (any conformant Kubernetes distribution) |
+| `stage` | `{component}-stage` | Single-node (any conformant Kubernetes distribution) |
+| `prod` | `{component}-prod` | Single-node (any conformant Kubernetes distribution) |
 
 Each environment has its own ApplicationSet and values directory. Stub files exist for `stage` and `prod`; add elements to their generators when ready.
 

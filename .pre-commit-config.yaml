@@ -1,0 +1,49 @@
+# Pre-commit hooks for the lakeops GitOps repo.
+# ----------------------------------------------------------------------------
+# Install once after cloning:
+#   pip install pre-commit
+#   pre-commit install
+#
+# From then on, hooks run automatically on `git commit`. To run on demand:
+#   pre-commit run --all-files
+#
+# Hooks defined here:
+#   - render-appprojects: regenerates apps/appprojects/rendered/ from the Helm
+#     chart and stages the changes. Blocks the commit if `helm template`
+#     fails (syntax error in templates/appproject.yaml or values.yaml).
+#
+# The companion GitHub Actions workflow (.github/workflows/lint.yaml) runs the
+# same drift check in CI as a safety net for the local hook.
+# ----------------------------------------------------------------------------
+
+minimum_pre_commit_version: "3.5.0"
+
+repos:
+  # ---- Trailing whitespace / EOF newline hygiene -----------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        # Rendered YAML often has intentional trailing spaces from
+        # `nindent`; scope the hook to non-rendered paths only.
+        exclude: ^apps/appprojects/rendered/
+      - id: end-of-file-fixer
+        exclude: ^apps/appprojects/rendered/
+
+  # ---- Render the AppProject Helm chart --------------------------------------
+  # Local hook — reuses the existing bash script. Keeps the rendered/ tree in
+  # sync with values.yaml on every commit that touches the chart source.
+  - repo: local
+    hooks:
+      - id: render-appprojects
+        name: Render AppProject Helm chart
+        description: |
+          Regenerate apps/appprojects/rendered/*.yaml from
+          apps/appprojects/values.yaml. Re-runs whenever the chart source
+          (values.yaml, Chart.yaml, templates/) changes. Aborts the commit
+          if helm template fails.
+        entry: bash scripts/render-appprojects.sh
+        language: system
+        pass_filenames: false
+        files: |
+          ^apps/appprojects/(values\.yaml|Chart\.yaml|templates/.*)$

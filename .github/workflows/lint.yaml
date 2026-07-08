@@ -1,0 +1,95 @@
+# GitHub Actions: lint and drift-check for the AppProject Helm chart.
+# ----------------------------------------------------------------------------
+# Two parallel jobs:
+#
+#   lint-chart
+#     - helm lint on apps/appprojects/
+#     - helm template + kubeconform against the rendered output
+#     Catches: schema errors, typos in sourceRepos/destinations, malformed
+#     CRD fields.
+#
+#   drift-check   (CRITICAL — this is the safety net for pre-commit)
+#     - Runs scripts/render-appprojects.sh
+#     - Compares against the committed rendered/ files
+#     - Fails the workflow if values.yaml changed without a re-render
+#     Catches: forgotten local renders, manual edits to rendered/*.yaml that
+#     drift from the chart source.
+#
+# Triggers: every push to main and every PR.
+# ----------------------------------------------------------------------------
+
+name: lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # ---- Job 1: helm lint + kubeconform on rendered output ---------------------
+  lint-chart:
+    name: helm lint + kubeconform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.2
+
+      - name: Install kubeconform
+        run: |
+          curl -sSL -o /tmp/kubeconform.tar.gz \
+            https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar -xzf /tmp/kubeconform.tar.gz -C /tmp
+          sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
+          kubeconform -v
+
+      - name: helm lint
+        run: helm lint apps/appprojects/
+
+      - name: helm template + kubeconform
+        run: |
+          helm template apps/appprojects/ -s templates/appproject.yaml \
+            | kubeconform -strict -summary -ignore-missing-schemas
+
+  # ---- Job 2: rendered/ drift check -----------------------------------------
+  drift-check:
+    name: AppProject rendered/ drift check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.2
+
+      - name: Install csplit (coreutils)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq coreutils moreutils
+
+      - name: Render AppProjects
+        run: bash scripts/render-appprojects.sh
+
+      - name: Diff against committed rendered/
+        id: diff
+        run: |
+          if git diff --exit-code --stat apps/appprojects/rendered/; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "rendered/ is in sync."
+          else
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            echo "::error::rendered/ is out of sync with values.yaml."
+            echo "::error::Run 'bash scripts/render-appprojects.sh' and commit the result."
+            git diff --stat apps/appprojects/rendered/
+            exit 1
+          fi

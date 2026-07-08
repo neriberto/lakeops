@@ -18,18 +18,20 @@ OUTPUT_DIR="${CHART_DIR}/rendered"
 mkdir -p "${OUTPUT_DIR}"
 
 # Render the chart and split into one file per AppProject.
-# Each AppProject is separated by "---" in the Helm output. We use csplit
-# to split them into individual files by matching the "apiVersion" line.
+# Each AppProject is separated by "---" in the Helm output. csplit uses
+# zero-padded suffixes by default (tmp-00, tmp-01, ...). The format
+# string '%02d' makes the padding explicit and stable across coreutils
+# versions.
 helm template "${CHART_DIR}" -s templates/appproject.yaml \
-  | csplit -sz -f "${OUTPUT_DIR}/tmp-" - '/^---$/' '{*}'
+  | csplit -sz -f "${OUTPUT_DIR}/tmp-" --suffix-format='%02d' - '/^---$/' '{*}'
 
-# Rename the split files based on the AppProject name.
+# Rename split files based on the AppProject name.
 # The template emits projects in the order defined in values.yaml:
-#   0 → infrastructure, 1 → platform, 2 → workloads
+#   00 → infrastructure, 01 → platform, 02 → workloads
 declare -A NAMES=(
-  [0]="infrastructure"
-  [1]="platform"
-  [2]="workloads"
+  ["00"]="infrastructure"
+  ["01"]="platform"
+  ["02"]="workloads"
 )
 
 # Remove old files
@@ -44,6 +46,9 @@ for i in "${!NAMES[@]}"; do
   if [ -f "$src" ]; then
     mv "$src" "$dst"
     echo "  wrote ${dst}"
+  else
+    echo "::error::expected split file ${src} not found — chart output may have changed"
+    exit 1
   fi
 done
 

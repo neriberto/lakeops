@@ -1,11 +1,13 @@
 # apps/values/dev/seaweedfs.yaml
-# Overrides for seaweedfs Helm chart in dev (microk8s).
+# Overrides for seaweedfs Helm chart in dev.
+# storageClass intentionally omitted (inherits cluster default) so this file
+# works on microk8s, EKS, GKE, k3s, kind, and any other conformant Kubernetes
+# distribution without change.
 # ----------------------------------------------------------------------------
 master:
   enabled: true
   data:
     type: "persistentVolumeClaim"
-    storageClass: "microk8s-hostpath"
     size: "1Gi"
 volume:
   enabled: true
@@ -13,13 +15,11 @@ volume:
   dataDirs:
     - name: data
       type: "persistentVolumeClaim"
-      storageClass: "microk8s-hostpath"
       size: "10Gi"
       maxVolumes: 0
 filer:
   enabled: true
   enablePVC: true
-  storageClass: "microk8s-hostpath"
   storage: "5Gi"
   s3:
     enabled: true

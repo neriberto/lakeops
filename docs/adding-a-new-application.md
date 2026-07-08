@@ -105,7 +105,7 @@ auth:
   postgresPassword: admin-dev
 primary:
   persistence:
-    storageClass: microk8s-hostpath
+    storageClass: ""           # empty = use cluster default (gp2 on EKS, standard on GKE, microk8s-hostpath on microk8s, local-path on k3s)
     size: 8Gi
   resources:
     requests:
@@ -223,7 +223,7 @@ Each element in the ApplicationSet generator supports these fields:
 
 | Category | Project | Examples |
 |---|---|---|
-| Storage and networking | `infrastructure` | SeaweedFS, MinIO, Nginx Ingress, MetalLB, cert-manager |
+| Storage and networking | `infrastructure` | SeaweedFS, Nginx Ingress, MetalLB, cert-manager |
 | Shared data layer | `platform` | PostgreSQL, Redis, Kafka, Vault, Keycloak |
 | Datalake workloads | `workloads` | Airflow, Trino, Spark, Nessie, Metabase, Superset, JupyterHub |
 
@@ -252,4 +252,4 @@ helm search repo {name}/{chart}
 kubectl describe pvc -n {component}-{env}
 ```
 
-Check that the `storageClass` exists on the cluster. For microk8s, use `microk8s-hostpath`.
+Check that the `storageClass` exists on the cluster. If the chart's `storageClass` is unset or empty, the cluster's default StorageClass is used — list available classes with `kubectl get storageclass` and confirm at least one is marked `(default)`.

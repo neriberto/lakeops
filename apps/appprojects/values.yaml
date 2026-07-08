@@ -24,22 +24,26 @@ sourceRepos:
 
 # NOT `server: '*'` — defense in depth against misconfigured cluster
 # registrations on the ArgoCD side. Allowed clusters:
-#   - Local dev (microk8s) — https://kubernetes.default.svc
-#   - Stage                — https://kubernetes.default.svc
-#   - Prod                 — https://kubernetes.default.svc
+#   - Local dev (any conformant Kubernetes distribution) — https://kubernetes.default.svc
+#   - Stage                                                — https://kubernetes.default.svc
+#   - Prod                                                 — https://kubernetes.default.svc
+#
+# `https://kubernetes.default.svc` is the in-cluster ArgoCD endpoint and
+# resolves to the cluster ArgoCD is deployed on regardless of distribution
+# (microk8s, EKS, GKE, k3s, kind, ...). It is NOT a microk8s-specific URL.
 #
 # CI lint (scripts/validate_applicationsets.py) rejects any Application
 # that targets the in-cluster destination outside of apps/dev/**, so the
 # AppProject allowlist stays uniform while dev remains isolated by path
 # convention (defense in depth on top of the AppProject allowlist).
 destinations:
-  # Local dev (microk8s) — in-cluster endpoint.
+  # Local dev — in-cluster endpoint.
   - server: https://kubernetes.default.svc
     namespace: '*'
-  # Stage (microk8s) — in-cluster endpoint.
+  # Stage — in-cluster endpoint.
   - server: https://kubernetes.default.svc
     namespace: '*'
-  # Prod (microk8s) — in-cluster endpoint.
+  # Prod — in-cluster endpoint.
   - server: https://kubernetes.default.svc
     namespace: '*'
 

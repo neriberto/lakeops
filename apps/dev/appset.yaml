@@ -1,8 +1,9 @@
 ---
 # apps/dev/appset.yaml
 # ----------------------------------------------------------------------------
-# ApplicationSet for local dev (microk8s single-node). Generates Applications
-# for datalake components into the in-cluster microk8s.
+# ApplicationSet for local dev (single-node, any conformant Kubernetes
+# distribution — microk8s, k3s, kind, ...). Generates Applications for
+# datalake components into the in-cluster destination.
 #
 # Applied via apps/bootstrap/dev.yaml which references this file as its
 # path. The bootstrap Application itself uses project: default (the

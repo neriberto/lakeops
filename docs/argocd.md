@@ -53,7 +53,7 @@ Deploy sequence — apply in this order.
 
 ## 1. AppProjects
 
-Cria os 3 projetos (infrastructure, platform, workloads) a partir dos manifests renderizados em `apps/appprojects/rendered/`.
+Create the 3 projects (infrastructure, platform, workloads) from the rendered `apps/appprojects/rendered/`.
 
 ```bash
 kubectl apply -f apps/bootstrap/appprojects.yaml
@@ -61,7 +61,7 @@ kubectl apply -f apps/bootstrap/appprojects.yaml
 
 ## 2. Dev environment
 
-Cria o ApplicationSet `appset-dev` que gera a Application `seaweedfs-dev`.
+Create ApplicationSet `appset-dev`.
 
 ```bash
 kubectl apply -f apps/bootstrap/dev.yaml
