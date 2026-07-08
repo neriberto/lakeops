@@ -2,7 +2,7 @@
 
 Secrets management strategy (Sealed Secrets vs External Secrets Operator)
 
-> **Status:** Proposed
+> **Status:** Accepted
 >
 > **Date:** 2026-07-07
 >
@@ -123,3 +123,10 @@ in the same cluster during the migration; the operator CRDs do not collide.
 - [RFC-0004 — Multi-cluster ArgoCD topology](0004-multi-cluster-progression.md)
 - [`apps/appprojects/values.yaml`](../../apps/appprojects/values.yaml):80
 - [`docs/adding-a-new-application.md`](../adding-a-new-application.md):104-105
+- [ADR-0008](../adr/0008-sealed-secrets-for-dev-and-stage.md) — ratifies this RFC; Sealed Secrets for `dev` and `stage`, ESO + Vault / AWS Secrets Manager deferred to `prod` per RFC-0004
+
+## Acceptance note
+
+Accepted **2026-07-08** per [ADR-0008](../adr/0008-sealed-secrets-for-dev-and-stage.md) — Sealed Secrets for `dev` and `stage`; External Secrets Operator (ESO) + Vault / AWS Secrets Manager deferred to `prod` per [RFC-0004](0004-multi-cluster-progression.md).
+
+The §Open Questions on cluster topology ("Single cluster or multi-cluster target?") and cloud target ("Cloud target?") are deliberately left open by this acceptance. ADR-0008 records the decision without resolving them — RFC-0004 retains ownership of those axes. Track A of the broader 2026-07-08 plan implements the CloudNativePG pivot via [SPEC-0006](../specs/0006-cloudnative-pg-pinning-and-cluster-cr-contract.md); Track C (separate future workstream) installs the Sealed Secrets controller.
