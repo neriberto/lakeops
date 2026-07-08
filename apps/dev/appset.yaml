@@ -28,6 +28,10 @@ spec:
             namespace: seaweedfs-dev
             project: infrastructure
             syncWave: -2
+          - chart: cloudnative-pg
+            namespace: cloudnative-pg-dev
+            project: infrastructure
+            syncWave: -2
   template:
     metadata:
       name: "{{ .chart }}-dev"
@@ -48,6 +52,11 @@ spec:
             releaseName: "{{ .chart }}"
             valueFiles:
               - "$values/apps/values/dev/{{ .chart }}.yaml"
+        - repoURL: https://cloudnative-pg.github.io/charts
+          chart: "{{ .chart }}"
+          targetRevision: 0.26.0
+          helm:
+            releaseName: "{{ .chart }}"
         - repoURL: https://github.com/neriberto/lakeops
           targetRevision: main
           ref: values
