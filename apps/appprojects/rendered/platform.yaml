@@ -1,15 +1,4 @@
 ---
-# apps/appprojects/rendered/platform.yaml
-# ----------------------------------------------------------------------------
-# Rendered output of helm template appprojects apps/appprojects/
-# -s templates/appproject.yaml. This file is committed so ArgoCD can apply
-# the AppProjects directly, without requiring a Helm-aware pipeline.
-#
-# To regenerate after editing apps/appprojects/values.yaml or templates/:
-#   bash scripts/render-appprojects.sh
-# ----------------------------------------------------------------------------
-# Source: appprojects/templates/appproject.yaml
----
 # Source: appprojects/templates/appproject.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -25,71 +14,76 @@ spec:
   sourceRepos:
     - https://github.com/neriberto/lakeops
     - https://seaweedfs.github.io/seaweedfs/helm
+    - https://cloudnative-pg.github.io/charts
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+    - namespace: '*'
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
-    - group: ''
+    - group: ""
       kind: Namespace
-    - group: ''
+    - group: ""
       kind: PersistentVolume
-    - group: 'rbac.authorization.k8s.io'
+    - group: rbac.authorization.k8s.io
       kind: ClusterRole
-    - group: 'rbac.authorization.k8s.io'
+    - group: rbac.authorization.k8s.io
       kind: ClusterRoleBinding
   namespaceResourceWhitelist:
-    - group: ''
+    - group: ""
       kind: ConfigMap
-    - group: ''
+    - group: ""
       kind: CronJob
-    - group: ''
+    - group: ""
       kind: Deployment
-    - group: ''
+    - group: ""
       kind: Endpoints
-    - group: ''
+    - group: ""
       kind: HorizontalPodAutoscaler
-    - group: ''
+    - group: ""
       kind: Ingress
-    - group: ''
+    - group: ""
       kind: Job
-    - group: ''
+    - group: ""
       kind: PersistentVolumeClaim
-    - group: ''
+    - group: ""
       kind: PodDisruptionBudget
-    - group: ''
+    - group: ""
       kind: Pod
-    - group: ''
+    - group: ""
       kind: ReplicaSet
-    - group: ''
+    - group: ""
       kind: Secret
-    - group: ''
+    - group: ""
       kind: Service
-    - group: ''
+    - group: ""
       kind: ServiceAccount
-    - group: ''
+    - group: ""
       kind: StatefulSet
-    - group: ''
+    - group: ""
       kind: StorageClass
-    - group: 'apps'
+    - group: apps
       kind: Deployment
-    - group: 'apps'
+    - group: apps
       kind: StatefulSet
-    - group: 'batch'
+    - group: batch
       kind: CronJob
-    - group: 'batch'
+    - group: batch
       kind: Job
-    - group: 'rbac.authorization.k8s.io'
+    - group: rbac.authorization.k8s.io
       kind: Role
-    - group: 'rbac.authorization.k8s.io'
+    - group: rbac.authorization.k8s.io
       kind: RoleBinding
-    - group: 'monitoring.coreos.com'
+    - group: monitoring.coreos.com
       kind: ServiceMonitor
-    - group: 'monitoring.coreos.com'
+    - group: monitoring.coreos.com
       kind: PrometheusRule
-    - group: 'networking.k8s.io'
+    - group: networking.k8s.io
       kind: Ingress
-    - group: 'policy'
+    - group: policy
       kind: PodDisruptionBudget
   orphanedResources:
-    warn: true
     ignore: []
+    warn: true

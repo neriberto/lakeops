@@ -21,6 +21,7 @@
 sourceRepos:
   - https://github.com/neriberto/lakeops
   - https://seaweedfs.github.io/seaweedfs/helm
+  - https://cloudnative-pg.github.io/charts
 
 # NOT `server: '*'` — defense in depth against misconfigured cluster
 # registrations on the ArgoCD side. Allowed clusters:
