@@ -15,6 +15,7 @@ spec:
     - https://github.com/neriberto/lakeops
     - https://seaweedfs.github.io/seaweedfs/helm
     - https://cloudnative-pg.github.io/charts
+    - https://charts.bitnami.com/bitnami
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
@@ -35,6 +36,8 @@ spec:
       kind: MutatingWebhookConfiguration
     - group: apiextensions.k8s.io
       kind: CustomResourceDefinition
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
   namespaceResourceWhitelist:
     - group: ""
       kind: ConfigMap
