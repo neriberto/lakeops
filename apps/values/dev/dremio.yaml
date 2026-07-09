@@ -139,18 +139,12 @@ coordinator:
 
   # Startup Probe
   startupProbe:
-    # Max timeout for the probe is calculated as failureThreshold * periodSeconds
-    # failureThreshold: Maximum number of allowed failures
-    failureThreshold: 300
-    # periodSeconds: Polling frequency expressed in seconds
+    failureThreshold: 900
     periodSeconds: 1
 
   # Readiness Probe
   readinessProbe:
-    # Max timeout for the probe is calculated as failureThreshold * periodSeconds
-    # failureThreshold: Maximum number of allowed failures
-    failureThreshold: 120
-    # periodSeconds: Polling frequency expressed in seconds
+    failureThreshold: 600
     periodSeconds: 1
 
 # Dremio Executor
