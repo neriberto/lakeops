@@ -382,6 +382,14 @@ distStorage:
         <name>fs.s3a.connection.ssl.enabled</name>
         <value>false</value>
       </property>
+      <property>
+        <name>dremio.bucket.discovery.enabled</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>dremio.s3.whitelisted.buckets</name>
+        <value>bucket-dev</value>
+      </property>
 
 # Dremio Start Parameters
 # Uncomment the below lines to provide extra start paramaters to be passed directly to Dremio
