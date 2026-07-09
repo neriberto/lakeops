@@ -30,7 +30,7 @@ spec:
             repoURL: https://seaweedfs.github.io/seaweedfs/helm
             chart: seaweedfs
             path: ""
-            version: "4.36.0"
+            version: "4.37.0"
             namespace: seaweedfs-dev
             project: infrastructure
             syncWave: -2
