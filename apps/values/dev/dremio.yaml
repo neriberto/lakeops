@@ -385,12 +385,16 @@ distStorage:
         <value>true</value>
       </property>
       <property>
+        <name>dremio.s3.endpoint</name>
+        <value>http://seaweedfs-s3.seaweedfs-dev:8333</value>
+      </property>
+      <property>
         <name>fs.s3a.path.style.access</name>
         <value>true</value>
       </property>
       <property>
         <name>fs.s3a.endpoint</name>
-        <value>seaweedfs-s3.seaweedfs-dev:8333</value>
+        <value>http://seaweedfs-s3.seaweedfs-dev:8333</value>
       </property>
       <property>
         <name>fs.s3a.connection.ssl.enabled</name>
