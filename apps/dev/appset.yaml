@@ -28,23 +28,26 @@ spec:
         elements:
           - name: seaweedfs
             repoURL: https://seaweedfs.github.io/seaweedfs/helm
-            chart: seaweedfs
-            version: 4.36.0
+            sourceKey: chart
+            sourceValue: seaweedfs
+            version: "4.36.0"
             namespace: seaweedfs-dev
             project: infrastructure
             syncWave: -2
 
           - name: cloudnative-pg
             repoURL: https://cloudnative-pg.github.io/charts
-            chart: cloudnative-pg
-            version: 0.29.0
+            sourceKey: chart
+            sourceValue: cloudnative-pg
+            version: "0.29.0"
             namespace: cloudnative-pg-dev
             project: infrastructure
             syncWave: -2
 
           - name: dremio
             repoURL: https://github.com/dremio/dremio-cloud-tools/
-            chart: charts/dremio_v2
+            sourceKey: path
+            sourceValue: charts/dremio_v2
             version: HEAD
             namespace: dremio-dev
             project: workloads
@@ -66,13 +69,13 @@ spec:
 
       sources:
         - repoURL: "{{ .repoURL }}"
-          chart: "{{ .chart }}"
+          {{ .sourceKey }}: "{{ .sourceValue }}"
           targetRevision: "{{ .version }}"
           helm:
-            releaseName: "{{ .chart }}"
+            releaseName: "{{ .name }}"
             ignoreMissingValueFiles: true
             valueFiles:
-              - "$values/apps/values/dev/{{ .chart }}.yaml"
+              - "$values/apps/values/dev/{{ .name }}.yaml"
 
         - repoURL: https://github.com/neriberto/lakeops
           targetRevision: main
