@@ -28,8 +28,8 @@ spec:
         elements:
           - name: seaweedfs
             repoURL: https://seaweedfs.github.io/seaweedfs/helm
-            sourceKey: chart
-            sourceValue: seaweedfs
+            chart: seaweedfs
+            path: ""
             version: "4.36.0"
             namespace: seaweedfs-dev
             project: infrastructure
@@ -37,8 +37,8 @@ spec:
 
           - name: cloudnative-pg
             repoURL: https://cloudnative-pg.github.io/charts
-            sourceKey: chart
-            sourceValue: cloudnative-pg
+            chart: cloudnative-pg
+            path: ""
             version: "0.29.0"
             namespace: cloudnative-pg-dev
             project: infrastructure
@@ -46,8 +46,8 @@ spec:
 
           - name: dremio
             repoURL: https://github.com/dremio/dremio-cloud-tools/
-            sourceKey: path
-            sourceValue: charts/dremio_v2
+            chart: ""
+            path: charts/dremio_v2
             version: HEAD
             namespace: dremio-dev
             project: workloads
@@ -69,7 +69,8 @@ spec:
 
       sources:
         - repoURL: "{{ .repoURL }}"
-          {{ .sourceKey }}: "{{ .sourceValue }}"
+          chart: "{{ .chart }}"
+          path: "{{ .path }}"
           targetRevision: "{{ .version }}"
           helm:
             releaseName: "{{ .name }}"
