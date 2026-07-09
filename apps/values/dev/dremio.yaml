@@ -375,15 +375,22 @@ distStorage:
   aws:
     bucketName: "bucket-dev"
     path: "/"
-    authentication: "metadata"
+    authentication: "accessKeySecret"
+    credentials:
+      accessKey: "77XDFJX5BHA1221V29EU"
+      secret: "uIZhkPTKJzJPfT0S39UowGvSYtIDyKw8n2pbRF9u"
     extraProperties: |
+      <property>
+        <name>dremio.s3.compat</name>
+        <value>true</value>
+      </property>
       <property>
         <name>fs.s3a.path.style.access</name>
         <value>true</value>
       </property>
       <property>
         <name>fs.s3a.endpoint</name>
-        <value>http://seaweedfs-s3.seaweedfs-dev:8333</value>
+        <value>seaweedfs-s3.seaweedfs-dev:8333</value>
       </property>
       <property>
         <name>fs.s3a.connection.ssl.enabled</name>
@@ -417,13 +424,7 @@ extraVolumeMounts: []
 
 # Extra Environment Variables
 # Array to add extra environment variables to Dremio's pods
-extraEnvs:
-  - name: AWS_ACCESS_KEY_ID
-    value: "77XDFJX5BHA1221V29EU"
-  - name: AWS_SECRET_ACCESS_KEY
-    value: "uIZhkPTKJzJPfT0S39UowGvSYtIDyKw8n2pbRF9u"
-  - name: AWS_DEFAULT_REGION
-    value: "us-east-1"
+extraEnvs: []
 
 # Whether to write logs to a file on disk for all Dremio resources. Disabled by default.
 # When enabled, log messages are logged to the console and written to a persistent volume mounted at /opt/dremio/log.
