@@ -353,9 +353,35 @@ zookeeper:
 # Control where uploaded files are stored for Dremio.
 # For more information, see https://docs.dremio.com/deployment/distributed-storage.html
 distStorage:
-  # local (dev only): stores data on the coordinator's PV. Sufficient for dev.
-  # For production, use aws/azure/gcp with proper S3-compatible storage.
-  type: "local"
+  type: "aws"
+  aws:
+    bucketName: "bucket-dev"
+    path: "/"
+    authentication: "accessKeySecret"
+    credentials:
+      accessKey: "77XDFJX5BHA1221V29EU"
+      secret: "uIZhkPTKJzJPfT0S39UowGvSYtIDyKw8n2pbRF9u"
+    extraProperties: |
+      <property>
+        <name>dremio.s3.compat</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>dremio.s3.endpoint</name>
+        <value>http://seaweedfs-s3.seaweedfs-dev:8333</value>
+      </property>
+      <property>
+        <name>fs.s3a.path.style.access</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>fs.s3a.endpoint</name>
+        <value>http://seaweedfs-s3.seaweedfs-dev:8333</value>
+      </property>
+      <property>
+        <name>fs.s3a.connection.ssl.enabled</name>
+        <value>false</value>
+      </property>
 
 # Dremio Start Parameters
 # Uncomment the below lines to provide extra start paramaters to be passed directly to Dremio

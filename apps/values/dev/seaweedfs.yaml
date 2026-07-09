@@ -23,9 +23,13 @@ filer:
   storage: "5Gi"
   s3:
     enabled: true
-    enableAuth: false
+    enableAuth: true
     port: 8333
 s3:
   enabled: false
+  credentials:
+    admin:
+      accessKey: "77XDFJX5BHA1221V29EU"
+      secretKey: "uIZhkPTKJzJPfT0S39UowGvSYtIDyKw8n2pbRF9u"
 admin:
   enabled: true
